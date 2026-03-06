@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Model Results — Detection | Classification</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #222; background:#f8f9fa; }
+
+    h1, h2, h3 { margin: 6px 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #e2e6ea;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .muted { color: #666; font-size: 0.94rem; }
+
+    .status-yes { color: #d93025; font-weight: 700; }
+    .status-no  { color: #1a8a1a; font-weight: 700; }
+
+    table { border-collapse: collapse; margin-top: 8px; width: 100%; }
+    td { padding: 6px 10px; vertical-align: middle; }
+
+    .prob-bar-bg {
+      background: #eef3f7;
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;
+      width: 220px;
+    }
+
+    .prob-bar-fill {
+      height: 10px;
+      background: #1a73e8;
+    }
+
+    a { color: #1a73e8; }
+  </style>
+</head>
+
+<body>
+
+  <h1>Inference Results</h1>
+
+  <div class="grid">
+
+    <!-- LEFT SIDE: UPLOADED IMAGE -->
+    <div class="card">
+      <h3>Uploaded Image</h3>
+      <img src="{{ url_for('uploaded_file', filename=filename) }}"
+           alt="uploaded"
+           style="width:100%; height:auto; border-radius:4px;">
+      <p class="muted">File: {{ filename }}</p>
+    </div>
+
+    <!-- RIGHT SIDE: RESULTS STACK -->
+    <div>
+
+      <!-- DETECTION RESULTS -->
+      <div class="card">
+        <h2>Detection</h2>
+
+        {% if detection.status == "No tumor" %}
+          <p class="status-no" style="font-size:1.2rem;">No tumor detected</p>
+          <p class="muted">{{ detection.explanation }}</p>
+        {% else %}
+          <p class="status-yes" style="font-size:1.2rem;">Tumor Found</p>
+          <p class="muted">{{ detection.explanation }}</p>
+        {% endif %}
+      </div>
+
+      <!-- CLASSIFICATION -->
+      <div class="card" style="margin-top:12px;">
+        <h2>Classification</h2>
+        <p>
+          Predicted Label:
+          <strong>{{ pred_label }}</strong>
+          — Confidence:
+          <strong>{{ top_prob }}</strong>
+        </p>
+
+        <h4>Per-class probabilities</h4>
+
+        <table>
+          {% for cls, p in prob_map.items() %}
+          <tr>
+            <td style="min-width:140px">{{ cls }}</td>
+            <td style="width:80px">{{ '%.4f' | format(p) }}</td>
+            <td>
+              <div class="prob-bar-bg">
+                <div class="prob-bar-fill" style="width: {{ (p*100)|round(2) }}%;"></div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <p style="margin-top:16px;">
+        <a href="{{ url_for('index') }}">← Run another image</a>
+      </p>
+
+    </div>
+  </div>
+
+</body>
+</html>

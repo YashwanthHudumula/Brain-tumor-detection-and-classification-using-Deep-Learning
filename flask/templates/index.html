@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Brain Tumor Classifier - DenseNet201</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .card { border: 1px solid #ddd; padding: 20px; border-radius: 6px; max-width: 700px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Brain Tumor Classifier (DenseNet201)</h2>
+    <p>Upload an MRI image (png/jpg/tif) and get a prediction.</p>
+
+    <form method="post" action="/predict" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*" required>
+      <button type="submit">Predict</button>
+    </form>
+
+    <hr>
+    <small>Model loaded from server. Classes: glioma, meningioma, notumor, pituitary.</small>
+  </div>
+</body>
+</html>

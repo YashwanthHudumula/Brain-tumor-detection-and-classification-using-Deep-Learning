@@ -1,0 +1,14 @@
+Ensemble Accuracy: 0.961098
+Macro Precision: 0.960532, Macro Recall: 0.958459, Macro F1: 0.958903
+Weighted Precision: 0.962057, Weighted Recall: 0.961098, Weighted F1: 0.961032
+
+              precision    recall  f1-score   support
+
+      glioma       0.99      0.91      0.95       300
+  meningioma       0.90      0.94      0.92       306
+     notumor       0.98      0.99      0.99       405
+   pituitary       0.97      1.00      0.98       300
+
+    accuracy                           0.96      1311
+   macro avg       0.96      0.96      0.96      1311
+weighted avg       0.96      0.96      0.96      1311
