@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Model Results — Detection | Segmentation | Classification</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #222; }
+    .grid { display:grid; grid-template-columns: 320px 1fr; gap:18px; align-items:start; }
+    .card { border:1px solid #e2e6ea; border-radius:8px; padding:14px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.03); }
+    .cards-row { display:flex; gap:12px; margin-top:12px; }
+    h1,h2,h3 { margin:6px 0; }
+    .status-yes { color: #1a8a1a; font-weight:700; } /* green */
+    .status-no  { color: #c23a3a; font-weight:700; } /* red */
+    table { border-collapse:collapse; margin-top:8px; }
+    td { padding:6px 10px; }
+    .muted { color:#666; font-size:0.95rem; }
+  </style>
+</head>
+<body>
+  <h1>Inference results</h1>
+
+  <div class="grid">
+    <!-- left: uploaded image -->
+    <div class="card">
+      <h3>Uploaded image</h3>
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="uploaded" style="width:100%; height:auto; display:block; border-radius:4px;">
+      <p class="muted">File: {{ filename }}</p>
+    </div>
+
+    <!-- right: 3 results stacked -->
+    <div>
+      <!-- DETECTION -->
+      <div class="card">
+        <h2>1) Detection</h2>
+        {% if detection.status == "No tumor" %}
+          <p class="status-no" style="font-size:1.2rem;">No tumor</p>
+          <p class="muted">{{ detection.explanation }}</p>
+        {% else %}
+          <p class="status-yes" style="font-size:1.2rem;">Tumor found</p>
+          <p class="muted">{{ detection.explanation }}</p>
+        {% endif %}
+      </div>
+
+      <!-- SEGMENTATION -->
+      <div class="card" style="margin-top:12px;">
+        <h3>Segmentation (Grad-CAM)</h3>
+{% if segmentation.overlay_file %}
+  <p>Showing Grad-CAM for predicted class.</p>
+  <img src="{{ url_for('uploaded_file', filename=segmentation.overlay_file) }}" style="max-width:100%;">
+  <p><small>Heatmap: <a href="{{ url_for('uploaded_file', filename=segmentation.heatmap_file) }}">download</a></small></p>
+{% else %}
+  <p>Grad-CAM not available{% if segmentation.get('explanation') %}: {{ segmentation.get('explanation') }}{% endif %}</p>
+{% endif %}
+
+      </div>
+
+      <!-- CLASSIFICATION -->
+      <div class="card" style="margin-top:12px;">
+        <h2>3) Classification</h2>
+        <p>Predicted label: <strong>{{ pred_label }}</strong> — Confidence: <strong>{{ top_prob }}</strong></p>
+
+        <h4>Per-class probabilities</h4>
+        <table>
+          {% for cls, p in prob_map.items() %}
+            <tr>
+              <td style="min-width:140px">{{ cls }}</td>
+              <td style="width:80px">{{ '%.4f'|format(p) }}</td>
+              <td>
+                <div style="background:#f0f4f8; border-radius:6px; width:220px; height:10px; overflow:hidden;">
+                  <div style="height:10px; width:{{ (p*100)|round(2) }}%; background:#1a73e8;"></div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <p style="margin-top:12px;"><a href="{{ url_for('index') }}">Run another image</a></p>
+    </div>
+  </div>
+</body>
+</html>
